@@ -3,10 +3,8 @@ from PIL import Image, ImageEnhance
 from torchvision.datasets import ImageFolder
 import torchvision.transforms as transforms
 
-
-TRAIN_DIR = '/home/ubuntu/data/tiny-imagenet-200/training'
-VAL_DIR = '/home/ubuntu/data/tiny-imagenet-200/validation'
-
+TRAIN_DIR = '/content/data/training'
+VAL_DIR = '/content/data/validation'
 
 """It assumes that training image data is in the following form:
 TRAIN_DIR/class4/image44.jpg

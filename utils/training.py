@@ -7,15 +7,15 @@ def optimization_step(model, loss, x_batch, y_batch, optimizer):
     """Make forward pass and update model parameters with gradients."""
 
     # forward pass
-    x_batch, y_batch = Variable(x_batch.cuda()), Variable(y_batch.cuda(async=True))
+    x_batch, y_batch = Variable(x_batch.cuda()), Variable(y_batch.cuda())
     logits = model(x_batch)
 
     # compute logloss
     loss_value = loss(logits, y_batch)
-    batch_loss = loss_value.data[0]
+    batch_loss = loss_value.item()
 
     # compute accuracies
-    pred = F.softmax(logits)
+    pred = F.softmax(logits, dim=1)
     batch_accuracy, batch_top5_accuracy = _accuracy(y_batch, pred, top_k=(1, 5))
 
     # compute gradients
@@ -107,8 +107,8 @@ def _accuracy(true, pred, top_k=(1,)):
 
     result = []
     for k in top_k:
-        correct_k = correct[:k].view(-1).float().sum(0)
-        result.append(correct_k.div_(batch_size).data[0])
+        correct_k = correct[:k].reshape(-1).float().sum(0)
+        result.append(correct_k.div_(batch_size)item())
 
     return result
 
@@ -122,16 +122,16 @@ def _evaluate(model, loss, val_iterator):
 
     for x_batch, y_batch in val_iterator:
 
-        x_batch = Variable(x_batch.cuda(), volatile=True)
-        y_batch = Variable(y_batch.cuda(async=True), volatile=True)
+        x_batch = Variable(x_batch.detach().cuda())
+        y_batch = Variable(y_batch.detach().cuda())
         n_batch_samples = y_batch.size()[0]
         logits = model(x_batch)
 
         # compute logloss
-        batch_loss = loss(logits, y_batch).data[0]
+        batch_loss = loss(logits, y_batch).item()
 
         # compute accuracies
-        pred = F.softmax(logits)
+        pred = F.softmax(logits, dim=1)
         batch_accuracy, batch_top5_accuracy = _accuracy(y_batch, pred, top_k=(1, 5))
 
         loss_value += batch_loss*n_batch_samples
