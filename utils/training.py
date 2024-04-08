@@ -1,7 +1,7 @@
 from torch.autograd import Variable
 import torch.nn.functional as F
 import time
-
+from tqdm import tqdm 
 
 def optimization_step(model, loss, x_batch, y_batch, optimizer):
     """Make forward pass and update model parameters with gradients."""
@@ -49,7 +49,7 @@ def train(model, loss, optimization_step_fn,
     for epoch in range(0, n_epochs):
 
         # main training loop
-        for x_batch, y_batch in train_iterator:
+        for x_batch, y_batch in tqdm(train_iterator):
 
             batch_loss, batch_accuracy, batch_top5_accuracy = optimization_step_fn(
                 model, loss, x_batch, y_batch
