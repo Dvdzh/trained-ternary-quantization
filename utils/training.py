@@ -108,7 +108,7 @@ def _accuracy(true, pred, top_k=(1,)):
     result = []
     for k in top_k:
         correct_k = correct[:k].reshape(-1).float().sum(0)
-        result.append(correct_k.div_(batch_size)item())
+        result.append(correct_k.div_(batch_size).item())
 
     return result
 
